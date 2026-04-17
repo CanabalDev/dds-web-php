@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Application\Ports\Out;
+namespace Application\Ports\Out\Equipo;
 
 use Domain\Models\EquipoFutbol;
 

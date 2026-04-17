@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Application\Ports\In;
+namespace Application\Ports\In\Equipo;
 
 interface RegisterGoalUseCase
 {
