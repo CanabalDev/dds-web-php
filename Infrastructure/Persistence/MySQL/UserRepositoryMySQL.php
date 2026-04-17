@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Infrastructure\Persistance\MySQL;
+namespace Infrastructure\Persistence\MySQL;
 
 use PDO;
 use Domain\Models\UserModel;

@@ -17,7 +17,8 @@ class CreateEquipoService implements CreateEquipoUseCase
     public function __construct(
         private SaveEquipoPort $savePort,
         private GetUserByIdPort $userPort
-    ) {}
+    ) {
+    }
 
     public function execute(CreateEquipoCommand $command): EquipoFutbol
     {

@@ -10,8 +10,10 @@ class UpdateEquipoCommand
         public string $id,
         public string $nombre,
         public string $eslogan,
+        public string $tecnicoId,
         public string $pais,
         public string $ciudad,
         public string $categoria
-    ) {}
+    ) {
+    }
 }

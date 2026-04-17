@@ -14,6 +14,7 @@ use Domain\ValueObjects\TeamCity;
 use Domain\ValueObjects\TeamCategory;
 
 use Application\Ports\Out\Equipo\SaveEquipoPort;
+use Application\Ports\Out\Equipo\UpdateEquipoPort;
 use Application\Ports\Out\Equipo\GetEquipoByIdPort;
 use Application\Ports\Out\Equipo\GetEquiposPort;
 use Application\Ports\Out\Equipo\DeleteEquipoPort;
@@ -21,6 +22,7 @@ use Application\Ports\Out\User\GetUserByIdPort;
 
 class EquipoRepositoryMySQL implements
     SaveEquipoPort,
+    UpdateEquipoPort,
     GetEquipoByIdPort,
     GetEquiposPort,
     DeleteEquipoPort
@@ -28,7 +30,8 @@ class EquipoRepositoryMySQL implements
     public function __construct(
         private PDO $pdo,
         private GetUserByIdPort $userPort
-    ) {}
+    ) {
+    }
 
     public function save(EquipoFutbol $equipo): EquipoFutbol
     {
@@ -53,6 +56,51 @@ class EquipoRepositoryMySQL implements
             $equipo->getNumCampeonatos(),
             $equipo->getNumExpulsiones(),
             $equipo->getNumEmpates()
+        ]);
+
+        $id = (int) $this->pdo->lastInsertId();
+        $equipo->setId($id);
+
+        return $equipo;
+    }
+
+    public function update(EquipoFutbol $equipo): EquipoFutbol
+    {
+        $id = $equipo->getId();
+
+        if (!$id) {
+            throw new \Exception("Equipo inválido para actualizar");
+        }
+
+        $stmt = $this->pdo->prepare("UPDATE equipos SET
+            nombre = ?,
+            eslogan = ?,
+            tecnico_id = ?,
+            pais = ?,
+            ciudad = ?,
+            categoria = ?,
+            num_goles = ?,
+            num_partidos = ?,
+            num_ganados = ?,
+            num_campeonatos = ?,
+            num_expulsiones = ?,
+            num_empates = ?
+            WHERE id = ?");
+
+        $stmt->execute([
+            $equipo->getNombre()->value(),
+            $equipo->getEslogan(),
+            $equipo->getTecnico()->getId()->value(),
+            $equipo->getPais()->value(),
+            $equipo->getCiudad()->value(),
+            $equipo->getCategoria()->value(),
+            $equipo->getNumGoles(),
+            $equipo->getNumPartidosJugados(),
+            $equipo->getNumPartidosGanados(),
+            $equipo->getNumCampeonatos(),
+            $equipo->getNumExpulsiones(),
+            $equipo->getNumEmpates(),
+            $id
         ]);
 
         return $equipo;
@@ -102,12 +150,13 @@ class EquipoRepositoryMySQL implements
             new TeamCountry($data['pais']),
             new TeamCity($data['ciudad']),
             new TeamCategory($data['categoria']),
-            (int)$data['num_goles'],
-            (int)$data['num_partidos'],
-            (int)$data['num_ganados'],
-            (int)$data['num_campeonatos'],
-            (int)$data['num_expulsiones'],
-            (int)$data['num_empates']
+            (int) $data['num_goles'],
+            (int) $data['num_partidos'],
+            (int) $data['num_ganados'],
+            (int) $data['num_campeonatos'],
+            (int) $data['num_expulsiones'],
+            (int) $data['num_empates'],
+            (int) $data['id']
         );
     }
 }

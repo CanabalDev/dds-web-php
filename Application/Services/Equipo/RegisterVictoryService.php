@@ -4,14 +4,15 @@ namespace Application\Services\Equipo;
 
 use Application\Ports\In\Equipo\RegisterVictoryUseCase;
 use Application\Ports\Out\Equipo\GetEquipoByIdPort;
-use Application\Ports\Out\Equipo\SaveEquipoPort;
+use Application\Ports\Out\Equipo\UpdateEquipoPort;
 
 class RegisterVictoryService implements RegisterVictoryUseCase
 {
     public function __construct(
         private GetEquipoByIdPort $getPort,
-        private SaveEquipoPort $savePort
-    ) {}
+        private UpdateEquipoPort $updatePort
+    ) {
+    }
 
     public function execute(string $teamId): void
     {
@@ -23,6 +24,6 @@ class RegisterVictoryService implements RegisterVictoryUseCase
 
         $equipo->registrarVictoria();
 
-        $this->savePort->save($equipo);
+        $this->updatePort->update($equipo);
     }
 }
